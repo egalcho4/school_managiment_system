@@ -1,0 +1,39 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<link rel="stylesheet" href="{%static 'css/bot/bootstrap.min.css'%}">
+<link rel="stylesheet" href="{%static 'css/style/style.css'%}">
+<style>
+    #slogincard{
+	width: 500px;
+	height: 100%;
+	top:100px;
+	padding: 20px;
+	border-radius: 20px;
+}
+</style>
+<body class="">
+    <div class="container-sm">
+<center>
+    <div class="card" id="slogincard">
+        <div class="card-body">
+            <form action="" method="post">
+                {%csrf_token%}
+<label for="" class="form-label">username</label>
+<input type="text" name="uname" class="form-control"><span class="fas fa-user"></span>
+<label for="" class="form-label">password</label>
+<input type="password" name="pas" class="form-control">
+<br>
+<button class="btn btn-premary" type="submit" style="width: 100%;background-color: blue;color: white;">LOGIN</button>
+            </form>
+        </div>
+    </div>
+</center>
+    </div>
+</body>
+</html>
