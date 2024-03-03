@@ -64,12 +64,18 @@ margin-top: 20px;
 border-radius: 20px;
 margin-left: 20px;
 align-items: center;
+margin-top: 40px;
 
    }#main-row{
     background-color: rgba(240, 248, 255, 0.694);
    }#anc{
     text-decoration: none;
     color: black;
+   }#dep{
+    text-decoration: none;
+    color: black;
+   }.scard:hover{
+    background-color: aqua;
    }
 </style>
 <body class="">
@@ -84,25 +90,25 @@ align-items: center;
 <div class="sidebar shadow-lg" style="background-color: rgba(240, 248, 255, 0.452);" id="sidebar">
     <br><br>
     <a href="{%url 'main:acounts'%}" class="" id="anc">
-<div class="card" id="scard">
+<div class="card scard" id="scard">
     <div class="card-body">
-        accounts
+        Students
     </div>
 </div></a>
-<a href="{%url 'main:departiment' %}">
-<div class="card" id="scard">
+<a href="{%url 'main:departiment' %}" id="dep">
+<div class="card scard" id="scard">
     <div class="card-body">
-        departiment
+    Assisment
     </div>
 </div></a>
-<div class="card" id="scard">
+<div class="card scard" id="scard">
     <div class="card-body">
-        results
+        Teacher
     </div>
 </div>
-<div class="card" id="scard">
+<div class="card scard" id="scard">
     <div class="card-body">
-    subject
+    admins
     </div>
 </div>
 </div>
@@ -160,6 +166,14 @@ align-items: center;
     </div> </div>
     <script src="{%static 'js/index.js'%}">
 
+    </script>
+    <script>
+        var card=document.querySelectorAll('.card');
+        for(var  i=0; i<card.length;i++){
+            card[i].addEventListener('hover',()=>{
+                card[i].style.backgroundColor="red";
+            })
+        }
     </script>
 </body>
 </html>

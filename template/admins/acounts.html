@@ -1,306 +1,486 @@
-{%extends 'admins/home.html'%}
-{%load static%}
+{%extends 'admins/home.html'%} {%load static%}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>accounts</title>
-</head>
-<script src="{%static 'js/index.js' %}"></script>
-<body>
+  </head>
+  <script src="{%static 'js/index.js' %}"></script>
+  <style>
+    .model {
+      width: 100%;
+      height: 100%;
+      margin-top: 70px;
+      transition: 2s;
+    }
+    .zoom {
+      animation: zoom;
+      animation-duration: 2s;
+      animation-iteration-count: 1;
+      animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes zoom {
+      from {
+        -webkit-transform: scale(0);
+      }
+      top {
+        -webkit-transform: scale(1);
+      }
+    }
+    .ul li {
+      float: left;
+      display: flex;
+    }
+  </style>
+  <body>
     {%block main%}
-    <br><br>
-    <div class="row">
-        <div class="col-10">
-            <div class="" id="form" style="display: none;">
-                <div class="card" style="">
-<div class="card-header">
-    <h5>fill the form and create users</h5>
-</div>
-      <div class="card-body">         
-<form action="" method="post">
-    {%csrf_token%}
+    <br /><br />
 
     <div class="row">
-        <div class="col-6">
-<label for="" class="form-label">username</label>
-<input type="text" class="form-control" name="uname">
-<label for="" class="form-label">first_name</label>
-<input type="text" class="form-control" name="fname">
-<label for="" class="form-label">last_name</label>
-<input type="text" class="form-control" name="lname">
-<label for="" class="form-label">age</label>
-<input type="date" mina="2000-01-01" maxa="1945-12-31" value="2000-01-01"  class="form-control" name="age">
-<label for="" class="form-label">username</label>
-<select class="form-control" name="gender" >
-<option value="male">male</option>
-<option value="female">female</option>
-</select>
-<label for="" class="form-label">type</label>
-<select name="role" id="" class="form-control">
-    
-    <option value="1">student</option>
-    <option value="2">teacher</option>
-    <option value="3">director</option>
-    <option value="4">head</option>
-</select>
-<input type="hidden" name="image" id="image" value="">
-        </div>
-       
-        <div class="col-6">
-            <div class="display">
-                <img src="" alt="no image" id="im" srcset="" style="width:  250px;height: 250px;border: 1px solid black;border-radius: 20px;">
+      <div class="col-10">
+        <div class="card" style="display: none" id="modle-form">
+          <form action="" method="post">
+            <div class="card-body">
+              {%csrf_token%}
+              <label for="" class="form-label">grade</label>
+              <input
+                type="number"
+                class="form-control"
+                name="grade"
+                placeholder="example:9"
+              />
+              <label for="" class="form-label">section</label>
+              <input
+                type="text"
+                class="form-control"
+                name="sec"
+                placeholder="example:A"
+              />
             </div>
-            <br>
-            <div class="" style="top: 380px;">
-                <label for="" class="form-label">Upload Image</label>
-                <input type="file" class="form-control" name="" id="img" style="width: 250px;">
+            <div class="card-footer">
+              <span
+                ><button type="submit" class="btn btn-success">
+                  save
+                </button></span
+              >
+              <span><a class="btn btn-danger">delete</a></span>
             </div>
-            
+          </form>
         </div>
+
+        <div class="card" style="" id="section-list">
+          <div class="card-header">l</div>
+          <div class="card-body">
+            <table class="table table-active table-hover table-responsive-sm">
+              <thead>
+                <th>No</th>
+                <th>Grade</th>
+                <th>Section</th>
+                <th>Update</th>
+              </thead>
+              <tbody>
+                {%for u in page_obj%}
+                <tr>
+                  <td>{{forloop.counter}}</td>
+                  <td>{{u.grade}}</td>
+                  <td>{{u.section}}</td>
+                  <td>
+                    <a href="{%url 'main:view_student' u.id %}">view</a>
+                    <a href="">delete</a>
+                  </td>
+                </tr>
+                {%endfor%}
+              </tbody>
+            </table>
+
+            <div class="pagination">
+              <span class="step-links">
+                {%if page_obj.has_previous%}
+                <a href="?page=1">&laquo; </a>
+                <a href="?page={{page_obj.previous_page_number}}">previous</a>
+                {%endif%}
+                <span class="current">
+                  Page{{page_obj.number}}of {{page_obj.paginator.num_pages}}
+                </span>
+                {%if page_obj.has_next%}
+                <a href="?page={{page_obj.next_page_number}}">next</a>
+                <a href="?page={{page_obj.paginator.num_pages}}">&raquo;</a>
+                {%endif%}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-2">
+        <button class="btn btn-success" onclick="addsection()">
+          new section
+        </button>
+      </div>
     </div>
-    <br>
-    <button class="btn btn-primary" style="width: 100%;">Create users</button>
-</form></div></div>
-            </div>
-            <div class="" id="user_list">
-                <div class="card">
-                <div class="student" id="student">
 
-               
-                    <div class="card-header">
-                        <h5>List Of Students</h5>
+    <div class="row" style="display: none">
+      <div class="col-10">
+        <div class="" id="form" style="display: none">
+          <div class="card" style="">
+            <div class="card-header">
+              <h5>fill the form and create users</h5>
+            </div>
+            <div class="card-body">
+              <form action="" method="post">
+                {%csrf_token%}
+
+                <div class="row">
+                  <div class="col-6">
+                    <label for="" class="form-label">username</label>
+                    <input type="text" class="form-control" name="uname" />
+                    <label for="" class="form-label">first_name</label>
+                    <input type="text" class="form-control" name="fname" />
+                    <label for="" class="form-label">last_name</label>
+                    <input type="text" class="form-control" name="lname" />
+                    <label for="" class="form-label">age</label>
+                    <input
+                      type="date"
+                      mina="2000-01-01"
+                      maxa="1945-12-31"
+                      value="2000-01-01"
+                      class="form-control"
+                      name="age"
+                    />
+                    <label for="" class="form-label">username</label>
+                    <select class="form-control" name="gender">
+                      <option value="male">male</option>
+                      <option value="female">female</option>
+                    </select>
+                    <label for="" class="form-label">type</label>
+                    <select name="role" id="" class="form-control">
+                      <option value="1">student</option>
+                      <option value="2">teacher</option>
+                      <option value="3">director</option>
+                      <option value="4">head</option>
+                    </select>
+                    <input type="hidden" name="image" id="image" value="" />
+                  </div>
+
+                  <div class="col-6">
+                    <div class="display">
+                      <img
+                        src=""
+                        alt="no image"
+                        id="im"
+                        srcset=""
+                        style="
+                          width: 250px;
+                          height: 250px;
+                          border: 1px solid black;
+                          border-radius: 20px;
+                        "
+                      />
                     </div>
-                    <div class="card-body">
-                       
-                        
+                    <br />
+                    <div class="" style="top: 380px">
+                      <label for="" class="form-label">Upload Image</label>
+                      <input
+                        type="file"
+                        class="form-control"
+                        name=""
+                        id="img"
+                        style="width: 250px"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <br />
+                <button class="btn btn-primary" style="width: 100%">
+                  Create users
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="" id="user_list">
+          <div class="card" style="display: none">
+            <div class="student" id="student">
+              <div class="card-header">
+                <h5>List Of Students</h5>
+              </div>
+              <div class="card-body">
                 <table class="table table-striped table-condesed">
-                    <thead>
-                        <th>No</th>
-                        <th>username</th>
-                        <th>first_name</th>
-                        <th>last_name</th>
-                        <th>age</th>
-                        <th>gender</th>
-                        <th>role</th>
-                        <th>image</th>
-                        <th>Update</th>
-                    </thead>
-                    <tbody>
-                        {%for u in user %}
-                        <tr>
-                            <td>{{forloop.counter}}</td>
-                            <td>{{u.uname}}</td>
-                            <td>{{u.fname}}</td>
-                            <td>{{u.lname}}</td>
-                            <td>{{u.age}}</td>
-                            <td>{{u.gender}}</td>
-                            <td>{{u.role}}</td>
-                            <td><img src="{{u.image}}" style="width: 40px; height: 40px;" alt=""></td>
-                            <td><a href="{%url 'main:update_users' u.id %}">view</a></td>
-                        </tr>
-                        {%endfor%}
-                        
-                    </tbody>
+                  <thead>
+                    <th>No</th>
+                    <th>username</th>
+                    <th>first_name</th>
+                    <th>last_name</th>
+                    <th>age</th>
+                    <th>gender</th>
+                    <th>role</th>
+                    <th>image</th>
+                    <th>Update</th>
+                  </thead>
+                  <tbody>
+                    {%for u in page_obj %}
+                    <tr>
+                      <td>{{forloop.counter}}</td>
+                      <td>{{u.uname}}</td>
+                      <td>{{u.fname}}</td>
+                      <td>{{u.lname}}</td>
+                      <td>{{u.age}}</td>
+                      <td>{{u.gender}}</td>
 
+                      <td>student</td>
+                      <td>
+                        <img
+                          src="{{u.image}}"
+                          style="width: 40px; height: 40px"
+                          alt=""
+                        />
+                      </td>
+                      <td>
+                        <a href="{%url 'main:update_users' u.id %}">view</a>
+                      </td>
+                    </tr>
+                    {%endfor%}
+                  </tbody>
                 </table>
+                <div class="pagination">
+                  <span class="step-links">
+                    {%if page_obj.has_previous%}
+                    <a href="?page=1">&laquo; </a>
+                    <a href="?page={{page_obj.previous_page_number}}"
+                      >previous</a
+                    >
+                    {%endif%}
+                    <span class="current">
+                      Page{{page_obj.number}}of {{page_obj.paginator.num_pages}}
+                    </span>
+                    {%if page_obj.has_next%}
+                    <a href="?page={{page_obj.next_page_number}}">next</a>
+                    <a href="?page={{page_obj.paginator.num_pages}}">&raquo;</a>
+                    {%endif%}
+                  </span>
                 </div>
-                </div>
-                <div class="teacher" style="display: none;" id="teacher">
-                    
-                        <div class="card-header">
-                            <h5>List Of Teacher</h5>
-                        </div>
-                        <div class="card-body">
-                           
-                    <table class="table table-striped table-condesed">
-                        <thead>
-                            <th>No</th>
-                            <th>username</th>
-                            <th>first_name</th>
-                            <th>last_name</th>
-                            <th>age</th>
-                            <th>gender</th>
-                            <th>role</th>
-                            <th>image</th>
-                            <th>Update</th>
-                        </thead>
-                        <tbody>
-                            {%for u in teach %}
-                            <tr>
-                                <td>{{forloop.counter}}</td>
-                                <td>{{u.uname}}</td>
-                                <td>{{u.fname}}</td>
-                                <td>{{u.lname}}</td>
-                                <td>{{u.age}}</td>
-                                <td>{{u.gender}}</td>
-                                <td>{{u.role}}</td>
-                                <td><img src="{{u.image}}" style="width: 40px; height: 40px;" alt=""></td>
-                                <td><a href="{%url 'main:update_users' u.id %}">view</a></td>
-                            </tr>
-                            {%endfor%}
-                            
-                        </tbody>
-    
-                    </table>
-                    </div>
-                </div>
-                <div class="director" style="display: none;" id="director">
-                    
-                        <div class="card-header">
-                            <h5>List Of Director</h5>
-                        </div>
-                        <div class="card-body">
-                           
-                    <table class="table table-striped table-condesed">
-                        <thead>
-                            <th>No</th>
-                            <th>username</th>
-                            <th>first_name</th>
-                            <th>last_name</th>
-                            <th>age</th>
-                            <th>gender</th>
-                            <th>role</th>
-                            <th>image</th>
-                            <th>Update</th>
-                        </thead>
-                        <tbody>
-                            {%for u in dir %}
-                            <tr>
-                                <td>{{forloop.counter}}</td>
-                                <td>{{u.uname}}</td>
-                                <td>{{u.fname}}</td>
-                                <td>{{u.lname}}</td>
-                                <td>{{u.age}}</td>
-                                <td>{{u.gender}}</td>
-                                <td>{{u.role}}</td>
-                                <td><img src="{{u.image}}" style="width: 40px; height: 40px;" alt=""></td>
-                                <td><a href="{%url 'main:update_users' u.id %}">view</a></td>
-                            </tr>
-                            {%endfor%}
-                            
-                        </tbody>
-    
-                    </table>
-                    </div>
-                </div>
-                <div class="head" style="display: none;" id="head">
-                    
-                        <div class="card-header">
-                            <h5>List Of Head</h5>
-                        </div>
-                        <div class="card-body">
-                           
-                    <table class="table table-striped table-condesed">
-                        <thead>
-                            <th>No</th>
-                            <th>username</th>
-                            <th>first_name</th>
-                            <th>last_name</th>
-                            <th>age</th>
-                            <th>gender</th>
-                            <th>role</th>
-                            <th>image</th>
-                            <th>Update</th>
-                        </thead>
-                        <tbody>
-                            {%for u in head %}
-                            <tr>
-                                <td>{{forloop.counter}}</td>
-                                <td>{{u.uname}}</td>
-                                <td>{{u.fname}}</td>
-                                <td>{{u.lname}}</td>
-                                <td>{{u.age}}</td>
-                                <td>{{u.gender}}</td>
-                                <td>{{u.role}}</td>
-                                <td><img src="{{u.image}}" style="width: 40px; height: 40px;" alt=""></td>
-                                <td><a href="{%url 'main:update_users' u.id %}">view</a></td>
-                            </tr>
-                            {%endfor%}
-                            
-                        </tbody>
-    
-                    </table>
-                    </div>
-                </div>
-</div>
+              </div>
             </div>
+            <div class="teacher" style="display: none" id="teacher">
+              <div class="card-header">
+                <h5>List Of Teacher</h5>
+              </div>
+              <div class="card-body">
+                <table class="table table-striped table-condesed">
+                  <thead>
+                    <th>No</th>
+                    <th>username</th>
+                    <th>first_name</th>
+                    <th>last_name</th>
+                    <th>age</th>
+                    <th>gender</th>
+                    <th>role</th>
+                    <th>image</th>
+                    <th>Update</th>
+                  </thead>
+                  <tbody>
+                    {%for u in teach %}
+                    <tr>
+                      <td>{{forloop.counter}}</td>
+                      <td>{{u.uname}}</td>
+                      <td>{{u.fname}}</td>
+                      <td>{{u.lname}}</td>
+                      <td>{{u.age}}</td>
+                      <td>{{u.gender}}</td>
+                      <td>teacher</td>
+                      <td>
+                        <img
+                          src="{{u.image}}"
+                          style="width: 40px; height: 40px"
+                          alt=""
+                        />
+                      </td>
+                      <td>
+                        <a href="{%url 'main:update_users' u.id %}">view</a>
+                      </td>
+                    </tr>
+                    {%endfor%}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="director" style="display: none" id="director">
+              <div class="card-header">
+                <h5>List Of Director</h5>
+              </div>
+              <div class="card-body">
+                <table class="table table-striped table-condesed">
+                  <thead>
+                    <th>No</th>
+                    <th>username</th>
+                    <th>first_name</th>
+                    <th>last_name</th>
+                    <th>age</th>
+                    <th>gender</th>
+                    <th>role</th>
+                    <th>image</th>
+                    <th>Update</th>
+                  </thead>
+                  <tbody>
+                    {%for u in dir %}
+                    <tr>
+                      <td>{{forloop.counter}}</td>
+                      <td>{{u.uname}}</td>
+                      <td>{{u.fname}}</td>
+                      <td>{{u.lname}}</td>
+                      <td>{{u.age}}</td>
+                      <td>{{u.gender}}</td>
+                      <td>director</td>
+                      <td>
+                        <img
+                          src="{{u.image}}"
+                          style="width: 40px; height: 40px"
+                          alt=""
+                        />
+                      </td>
+                      <td>
+                        <a href="{%url 'main:update_users' u.id %}">view</a>
+                      </td>
+                    </tr>
+                    {%endfor%}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="head" style="display: none" id="head">
+              <div class="card-header">
+                <h5>List Of Head</h5>
+              </div>
+              <div class="card-body">
+                <table class="table table-striped table-condesed">
+                  <thead>
+                    <th>No</th>
+                    <th>username</th>
+                    <th>first_name</th>
+                    <th>last_name</th>
+                    <th>age</th>
+                    <th>gender</th>
+                    <th>role</th>
+                    <th>image</th>
+                    <th>Update</th>
+                  </thead>
+                  <tbody>
+                    {%for u in head %}
+                    <tr>
+                      <td>{{forloop.counter}}</td>
+                      <td>{{u.uname}}</td>
+                      <td>{{u.fname}}</td>
+                      <td>{{u.lname}}</td>
+                      <td>{{u.age}}</td>
+                      <td>{{u.gender}}</td>
+                      <td>head</td>
+                      <td>
+                        <img
+                          src="{{u.image}}"
+                          style="width: 40px; height: 40px"
+                          alt=""
+                        />
+                      </td>
+                      <td>
+                        <a href="{%url 'main:update_users' u.id %}">view</a>
+                      </td>
+                    </tr>
+                    {%endfor%}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="col-2">
-            <button class="btn btn-success" style="top:70px;float: right;" onclick="adduser()">&plus;add new user</button>
-        <ul style="list-style-type: none;">
-            <li><input type="radio" name="sel"  value="1">&nbsp;student</li>
-            <li><input type="radio" name="sel" value="2">&nbsp;teacher</li>
-            <li><input type="radio" name="sel" value="3">&nbsp;director</li>
-            <li><input type="radio" name="sel" value="4">&nbsp;head</li>
-            <button onclick="set_this()" class="btn btn-success" style="width: 100%;">set</button>
+      </div>
+      <div class="col-2">
+        <button
+          class="btn btn-success"
+          style="top: 70px; float: right"
+          onclick="adduser()"
+        >
+          &plus;add new user
+        </button>
 
+        <ul style="list-style-type: none">
+          <li><input type="radio" name="sel" value="1" />&nbsp;student</li>
+          <li><input type="radio" name="sel" value="2" />&nbsp;teacher</li>
+          <li><input type="radio" name="sel" value="3" />&nbsp;director</li>
+          <li><input type="radio" name="sel" value="4" />&nbsp;head</li>
+          <button
+            onclick="set_this()"
+            class="btn btn-success"
+            style="width: 100%"
+          >
+            set
+          </button>
         </ul>
-        </div>
+      </div>
     </div>
     <script>
-        function adduser(){
-    var form=document.getElementById('form');
-    var user_list=document.getElementById('user_list');
-    user_list.style.display="none";
-    form.style.display="block";
-}
-var imgs=localStorage.getItem("img");
-var im=document.getElementById('im');
-        im.setAttribute("src",imgs);
-var img=document.getElementById('img');
-img.addEventListener('change',(e)=>{
-    const file=img.files[0];
-    const reader=new FileReader();
-    reader.addEventListener('load',()=>{
-        var im=document.getElementById('im');
-        var image=document.getElementById('image');
-        image.setAttribute("value",reader.result);
-        im.setAttribute("src",reader.result);
-        localStorage.setItem("img",reader.result)
+      function addsection() {
+        var section_list = document.getElementById("section-list");
+        section_list.style.display = "none";
+        var modle_form = document.getElementById("modle-form");
+        modle_form.style.display = "block";
+      }
+      function openmodel() {
+        document.getElementById("id01").style.display = "block";
+      }
+      function adduser() {
+        var form = document.getElementById("form");
+        var user_list = document.getElementById("user_list");
+        user_list.style.display = "none";
+        form.style.display = "block";
+      }
+      var imgs = localStorage.getItem("img");
+      var im = document.getElementById("im");
+      im.setAttribute("src", imgs);
+      var img = document.getElementById("img");
+      img.addEventListener("change", (e) => {
+        const file = img.files[0];
+        const reader = new FileReader();
+        reader.addEventListener("load", () => {
+          var im = document.getElementById("im");
+          var image = document.getElementById("image");
+          image.setAttribute("value", reader.result);
+          im.setAttribute("src", reader.result);
+          localStorage.setItem("img", reader.result);
+        });
+        reader.readAsDataURL(file);
+      });
+      function set_this() {
+        var id = document.querySelector('input[name="sel"]:checked').value;
 
-    })
-    reader.readAsDataURL(file);
-})
-function set_this(){
-var id=document.querySelector('input[name="sel"]:checked').value;
+        var stud = document.querySelector("#student");
+        var teacher = document.querySelector("#teacher");
+        var director = document.querySelector("#director");
+        var head = document.querySelector("#head");
 
-    
-    var stud=document.querySelector('#student');
-        var teacher=document.querySelector('#teacher');
-        var director=document.querySelector('#director');
-        var head=document.querySelector('#head');
-
-        
-    if (id==1){
-        
-        stud.style.display="block";
-        teacher.style.display="none";
-        director.style.display="none";
-        head.style.display="none";
-    }else if(id==2){
-        
-        stud.style.display="none";
-        teacher.style.display="block";
-        director.style.display="none";
-        head.style.display="none";
-    }else if(id==3){
-       
-        stud.style.display="none";
-        teacher.style.display="none";
-        director.style.display="block";
-        head.style.display="none";
-    }else if(id==4){
-       
-        stud.style.display="none";
-        teacher.style.display="none";
-        director.style.display="none";
-        head.style.display="block";
-    }
-
-}
+        if (id == 1) {
+          stud.style.display = "block";
+          teacher.style.display = "none";
+          director.style.display = "none";
+          head.style.display = "none";
+        } else if (id == 2) {
+          stud.style.display = "none";
+          teacher.style.display = "block";
+          director.style.display = "none";
+          head.style.display = "none";
+        } else if (id == 3) {
+          stud.style.display = "none";
+          teacher.style.display = "none";
+          director.style.display = "block";
+          head.style.display = "none";
+        } else if (id == 4) {
+          stud.style.display = "none";
+          teacher.style.display = "none";
+          director.style.display = "none";
+          head.style.display = "block";
+        }
+      }
     </script>
     {%endblock%}
-</body>
+  </body>
 </html>
